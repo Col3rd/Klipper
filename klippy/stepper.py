@@ -349,6 +349,10 @@ class PrinterRail:
         return list(self.steppers)
     def get_endstops(self):
         return list(self.endstops)
+    def get_len(self):
+        return self.axis_len
+    def getfloat(self, param):
+        return self.get(param)
     def add_extra_stepper(self, config):
         stepper = PrinterStepper(config, self.stepper_units_in_radians)
         self.steppers.append(stepper)
