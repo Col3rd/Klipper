@@ -13,11 +13,11 @@ class ScaraKinematics:
         logging.info("test set: %s", a)
         rail_proximal = stepper.PrinterRail(config.getsection('stepper_proximal'),
                                              units_in_radians=True)
-        self.proximal_length = rail_proximal.getfloat(rail_proximal, axis_len)
+        self.proximal_length = rail_proximal.getfloat('axis_len')
         
         rail_distal = stepper.PrinterRail(config.getsection('stepper_distal'),
                                              units_in_radians=True)
-        self.distal_length = rail_distal.getfloat(rail_distal, axis_len)
+        self.distal_length = rail_distal.getfloat('axis_len')
 
         rail_proximal.setup_itersolve(
             'scara_stepper_alloc', 'p',
