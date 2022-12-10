@@ -355,6 +355,8 @@ class PrinterRail:
     def getfloat(self, option, default=configfile.sentinel, minval=None, maxval=None,
                  above=None, below=None, note_valid=True):
         return self.config.getfloat(option, default, minval, maxval, above, below, note_valid)
+    def get(self, option, default=configfile.sentinel, note_valid=True):
+        return self.config.get(option, default, note_valid)    
     def add_extra_stepper(self, config):
         stepper = PrinterStepper(config, self.stepper_units_in_radians)
         self.steppers.append(stepper)

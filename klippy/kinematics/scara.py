@@ -8,9 +8,8 @@ import stepper, mathutil, chelper
 
 class ScaraKinematics:
     def __init__(self, toolhead, config):
-        # Setup arm rails and z rail
-        a = "test tt"
-        logging.info("test set: %s", a)
+        
+        
         rail_proximal = stepper.PrinterRail(config.getsection('stepper_proximal'),
                                              units_in_radians=True)
         self.proximal_length = rail_proximal.getfloat('position_max')
@@ -19,13 +18,18 @@ class ScaraKinematics:
                                              units_in_radians=True)
         self.distal_length = rail_distal.getfloat('position_max')
 
+        self.proximal_crosstalk = rail_proximal.get('gear_ratio')
+        logging.info("proximal gear: %s", self.proximal_crosstalk)
+        self.distal_crosstalk = rail_distal.get('gear_ratio')
+        logging.info("distal gear: %s", self.distal_crosstalk)
+
         rail_proximal.setup_itersolve(
             'scara_stepper_alloc', 'p',
-            self.proximal_length, self.distal_length, self.crosstalk, self.arm_mode)
+            self.proximal_length, self.distal_length, self.proximal_crosstalk, self.arm_mode)
 
         rail_distal.setup_itersolve(
             'scara_stepper_alloc', 'd',
-            self.proximal_length, self.distal_length, self.crosstalk, self.arm_mode)
+            self.proximal_length, self.distal_length, self.distal_crosstalk, self.arm_mode)
 
         rail_z = stepper.LookupMultiRail(config.getsection('stepper_z'))
         rail_z.setup_itersolve('cartesian_stepper_alloc', 'z')
