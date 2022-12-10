@@ -8,7 +8,14 @@ import stepper, mathutil, chelper
 
 class ScaraKinematics:
     def __init__(self, toolhead, config):
-        
+        # don't know why the config was read AFTER the steppers were set up but I fixed it
+        #TODO: figure out what xy_crosstalk_factor is
+        self.crosstalk = config.getfloat('xy_crosstalk_factor')
+        #TODO: get actual values from hardware team
+        self.theta_limits = config.getfloatlist('theta_limits')
+        self.psi_limits = config.getfloatlist('psi_limits')
+        self.min_radius = config.getfloat('minimum_radius')
+        self.arm_mode = config.getboolean('arm_mode')
         
         rail_proximal = stepper.PrinterRail(config.getsection('stepper_proximal'),
                                              units_in_radians=True)
@@ -18,18 +25,13 @@ class ScaraKinematics:
                                              units_in_radians=True)
         self.distal_length = rail_distal.getfloat('position_max')
 
-        self.proximal_crosstalk = rail_proximal.get('gear_ratio')
-        logging.info("proximal gear: %s", self.proximal_crosstalk)
-        self.distal_crosstalk = rail_distal.get('gear_ratio')
-        logging.info("distal gear: %s", self.distal_crosstalk)
-
         rail_proximal.setup_itersolve(
             'scara_stepper_alloc', 'p',
-            self.proximal_length, self.distal_length, self.proximal_crosstalk, self.arm_mode)
+            self.proximal_length, self.distal_length, self.crosstalk, self.arm_mode)
 
         rail_distal.setup_itersolve(
             'scara_stepper_alloc', 'd',
-            self.proximal_length, self.distal_length, self.distal_crosstalk, self.arm_mode)
+            self.proximal_length, self.distal_length, self.crosstalk, self.arm_mode)
 
         rail_z = stepper.LookupMultiRail(config.getsection('stepper_z'))
         rail_z.setup_itersolve('cartesian_stepper_alloc', 'z')
@@ -63,11 +65,6 @@ class ScaraKinematics:
                      self.proximal_length, self.distal_length)
 
         # Read config
-        self.crosstalk = config.getfloat('xy_crosstalk_factor')
-        self.theta_limits = config.getfloatlist('theta_limits')
-        self.psi_limits = config.getfloatlist('psi_limits')
-        self.min_radius = config.getfloat('minimum_radius')
-        self.arm_mode = config.getbool('arm_mode')
         if self.min_radius == None:
             self.min_radius = self.proximal_length - self.distal_length
             if self.min_radius <= 0:
