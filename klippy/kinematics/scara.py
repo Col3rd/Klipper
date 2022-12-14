@@ -15,7 +15,7 @@ class ScaraKinematics:
         self.theta_limits = config.getfloatlist('theta_limits')
         self.psi_limits = config.getfloatlist('psi_limits')
         self.min_radius = config.getfloat('minimum_radius')
-        self.arm_mode = config.getboolean('arm_mode')
+        self.arm_mode = config.getint('arm_mode')
         
         rail_proximal = stepper.PrinterRail(config.getsection('stepper_proximal'),
                                              units_in_radians=True)
@@ -25,9 +25,7 @@ class ScaraKinematics:
                                              units_in_radians=True)
         self.distal_length = rail_distal.getfloat('position_max')
 
-        rail_proximal.setup_itersolve(
-            'scara_stepper_alloc', 'p'.encode(),
-            self.proximal_length, self.distal_length, self.crosstalk, self.arm_mode)
+        rail_proximal.setup_itersolve('scara_stepper_alloc', 'p'.encode(), self.proximal_length, self.distal_length, self.crosstalk, self.arm_mode)
 
         rail_distal.setup_itersolve(
             'scara_stepper_alloc', 'd'.encode(),
