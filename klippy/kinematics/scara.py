@@ -26,11 +26,11 @@ class ScaraKinematics:
         self.distal_length = rail_distal.getfloat('position_max')
 
         rail_proximal.setup_itersolve(
-            'scara_stepper_alloc', 'p',
+            'scara_stepper_alloc', 'p'.encode(),
             self.proximal_length, self.distal_length, self.crosstalk, self.arm_mode)
 
         rail_distal.setup_itersolve(
-            'scara_stepper_alloc', 'd',
+            'scara_stepper_alloc', 'd'.encode(),
             self.proximal_length, self.distal_length, self.crosstalk, self.arm_mode)
 
         rail_z = stepper.LookupMultiRail(config.getsection('stepper_z'))
